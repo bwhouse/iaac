@@ -1,0 +1,18 @@
+
+
+### OUTGOING MAIL ###
+
+# mail relay (SMTP server) address/port/username/password
+msmtp_host: "smtp.gmail.com"
+msmtp_port: 465
+
+# mail address to redirect all local mail to
+msmtp_admin_email: "ben@bwhouse.net"
+# the user to forward all local root mail to, if msmtp setup is disabled
+mail_root_alias: "{{ user }}"
+# (auto/admin@CHANGEME.org) sender address for outgoing mail
+msmtp_from: 'auto'
+# yes/no: use STARTTLS
+msmtp_starttls: no
+# (optional) TLS certificate fingerprint of the SMTP server. use this to accept a self-signed certificate. get the server's certificate fingerprint with openssl s_client -connect $smtp_host:587 -starttls smtp < /dev/null 2>/dev/null |openssl x509 -fingerprint -noout
+# msmtp_host_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'

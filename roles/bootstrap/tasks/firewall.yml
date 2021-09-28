@@ -1,0 +1,39 @@
+- name: Install ufw
+  apt: name=ufw
+  become: true
+
+- name: Remvoe any iptables persistance
+  apt:
+    state: absent
+    update_cache: yes
+    cache_valid_time: 900
+    package:
+      - netfilter-persistent
+      - iptables-persistent
+  become: true
+
+- name: Allow ssh through firewall
+  community.general.ufw: 
+    proto: tcp 
+    port: '22' 
+    rule: allow
+  become: true
+
+
+
+- name: Set ufw policy
+  community.general.ufw: 
+    state: enabled 
+    direction: incoming 
+    default: deny
+  become: true
+  when: ufw_default_block_incomming
+
+- name: Set custom ufw rules
+  community.general.ufw:
+    comment: 'ufw_custom_rules_{{ item.comment }}'
+    proto: '{{ item.proto }}'
+    port: '{{ item.port }}'
+    rule: '{{ item.rule }}'
+  with_items: '{{ ufw_custom_rules }}'
+  become: true

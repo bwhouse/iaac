@@ -1,0 +1,26 @@
+##### DATE/TIME #####
+
+- name: set timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
+  when: timezone is defined
+  become: true
+  
+- name: install NTP time synchronization service
+  apt:
+    state: present
+    update_cache: yes
+    cache_valid_time: 900
+    package:
+      - ntp
+      - ntpdate
+  become: true
+  when: not oracle_vm_no_ntp
+
+- name: start NTP time synchronization service
+  service:
+    name: ntp
+    state: started
+    enabled: yes
+  become: true
+  when: not oracle_vm_no_ntp

@@ -1,0 +1,14 @@
+- name: Install Base Packages
+  apt:
+    state: present
+    update_cache: yes
+    cache_valid_time: 900
+    package:
+      - htop
+      - net-tools
+      - pv
+      - speedtest-cli
+      - vim
+      - git
+      - python3-pip
+  become: true

@@ -1,0 +1,106 @@
+
+
+- name: Create Nebula User
+  user:
+    name: "nebula"
+    shell: /bin/bash
+    create_home: no
+    system: true
+    password: "$6$lhJxkDwFVvp$T3WEi0jcqzM8B7MDeiqe1INEgzjqxjakR6x6tkTW.6Z7Lv65gQWYHI2rZlxWdQUgA3XyPP1gLXKT0W2yjK8oj/"
+  become: true
+
+- name: Create config directory
+  file:
+    path: /etc/nebula
+    state: directory
+    mode: "0700"
+    group: nebula
+    owner: nebula
+  become: true
+
+# "ansible_architecture": "x86_64"
+# "ansible_architecture": "aarch64",
+
+- name: Install binaries (x86)
+  unarchive:
+    src: https://github.com/slackhq/nebula/releases/download/v{{ nebula_version }}/nebula-linux-amd64.tar.gz
+    dest: /usr/bin
+    remote_src: yes
+    mode: "0755"
+  become: true
+  notify: restart nebula
+  when: 'ansible_architecture|string == "x86_64"'
+
+- name: Install binaries (x86)
+  unarchive:
+    src: https://github.com/slackhq/nebula/releases/download/v{{ nebula_version }}/nebula-linux-arm64.tar.gz
+    dest: /usr/bin
+    remote_src: yes
+    mode: "0755"
+  become: true
+  notify: restart nebula
+  when: 'ansible_architecture|string == "aarch64"'
+
+
+## Allows nebula to run as non-root (net_admin for setting up tun device and net_bind for DNS server)
+- name: Set cap_net_admin=+pe on /usr/bin/nebula
+  community.general.capabilities:
+    path: /usr/bin/nebula
+    capability: cap_net_bind_service,cap_net_admin=+ep
+    state: present
+  become: true
+
+- name: Install config
+  template:
+    src: files/config.yml
+    dest: /etc/nebula/config.yml
+    mode: "0600"
+    group: nebula
+    owner: nebula
+  become: true
+  notify: restart nebula
+
+- name: Install CA certificate
+  template:
+    src: files/ca.crt
+    dest: /etc/nebula/ca.crt
+    group: nebula
+    owner: nebula
+    mode: "0600"
+  become: true
+  notify: restart nebula
+
+- name: Install client certificates
+  template:
+    src: files/certs/{{ item }}
+    dest: /etc/nebula/{{ item }}
+    mode: "0600"
+    group: nebula
+    owner: nebula
+  loop:
+    - "{{ nebula_hostname }}.key"
+    - "{{ nebula_hostname }}.crt"
+  become: true
+  notify: restart nebula
+
+- name: Install service
+  template:
+    src: files/nebula.service
+    dest: /etc/systemd/system/nebula.service
+    mode: "0644"
+  become: true
+
+- name: Allow ssh through firewall
+  community.general.ufw: 
+    proto: udp 
+    port: 4242 
+    rule: allow
+  when: nebula_is_lighthouse
+  become: true
+
+- name: Enable service
+  service:
+    name: nebula
+    enabled: true
+    state: started
+  become: true

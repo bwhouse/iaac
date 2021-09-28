@@ -1,0 +1,19 @@
+
+
+- name: Set up authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ user }}"
+    state: present
+    key: "{{ lookup('file', item) }}"
+  loop:
+    - ssh-keys/main.pub
+    - ssh-keys/work-laptop.pub
+  become: true
+
+
+- name: Enable SSH
+  service:
+    name: sshd
+    enabled: true
+  become: true
+

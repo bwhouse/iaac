@@ -1,0 +1,29 @@
+- hosts: all
+  roles:
+    - bootstrap
+    - nebula
+
+
+
+- hosts:
+    - dirt
+    - shitlist
+    - docker
+  roles:
+    - role: geerlingguy.docker
+      become: true
+      vars:
+        docker_install_compose: "{{ ansible_os_family == 'Debian' }}"
+        docker_package: "{{ 'docker-ce' if ansible_os_family == 'Debian' else 'docker' }}"
+        docker_users:
+          - "{{ user }}"
+      when: 'ansible_architecture|string == "x86_64"'
+    - role: geerlingguy.docker_arm
+      become: true
+      vars:
+        docker_install_compose: true
+        docker_version: 5:20.10.8~3-0~ubuntu-focal
+        docker_users:
+          - "{{ user }}"
+      when: 'ansible_architecture|string == "aarch64"'     
+    - docker

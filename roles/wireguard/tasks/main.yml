@@ -1,0 +1,48 @@
+- name: Install wireguard Packages
+  apt:
+    state: present
+    update_cache: yes
+    cache_valid_time: 900
+    package:
+      - wiregaurd
+  become: true
+
+- name: Add wireguard module
+  community.general.modprobe:
+    name: wireguard
+    state: present
+  become: true
+
+- name: Add iptables module
+  community.general.modprobe:
+    name: iptable_nat
+    state: present
+  become: true
+
+- name: Add ip6tables module
+  community.general.modprobe:
+    name: ip6table_nat
+    state: present
+  become: true
+
+- name: Make watchguard module persistent
+  template:
+    src: files/wireguard.conf
+    dest: /etc/modules-load.d/wireguard.conf
+    mode: "0600"
+  become: true
+
+- name: Make iptables module persistent
+  template:
+    src: files/iptable.conf
+    dest: /etc/modules-load.d/iptable.conf
+    mode: "0600"
+  become: true
+
+- name: Make ip6table module persistent
+  template:
+    src: files/ip6table.conf
+    dest: /etc/modules-load.d/ip6table.conf
+    mode: "0600"
+  become: true
+
