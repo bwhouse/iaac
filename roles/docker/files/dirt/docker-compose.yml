@@ -1,0 +1,25 @@
+version: "3.3"
+services:
+  subspace:
+   image: subspacecommunity/subspace:latest
+   container_name: subspace
+   volumes:
+    - /opt/appdata/subspace/data:/data
+    - /opt/appdata/subspace/dnsmasq:/etc/dnsmasq.d
+   restart: always
+   environment:
+    - SUBSPACE_HTTP_HOST=dirt.8en.co
+    - SUBSPACE_LETSENCRYPT=true
+    - SUBSPACE_HTTP_INSECURE=false
+    - SUBSPACE_HTTP_ADDR=":80"
+    - SUBSPACE_NAMESERVERS=1.1.1.1,8.8.8.8
+    - SUBSPACE_LISTENPORT=51820
+    - SUBSPACE_IPV4_POOL=10.99.97.0/24
+    - SUBSPACE_IPV6_POOL=fd00::10:97:0/64
+    - SUBSPACE_IPV4_GW=10.99.97.1
+    - SUBSPACE_IPV6_GW=fd00::10:97:1
+    - SUBSPACE_IPV6_NAT_ENABLED=0
+    - SUBSPACE_DISABLE_DNS=1
+   cap_add:
+    - NET_ADMIN
+   network_mode: "host"

@@ -1,0 +1,11 @@
+oracle_vm_no_ntp: true
+
+ufw_custom_rules:
+  - comment: unifi controller 8080
+    proto: tcp
+    port: 8080
+    rule: allow
+  - comment: unifi controller web
+    proto: tcp
+    port: 8443
+    rule: allow  

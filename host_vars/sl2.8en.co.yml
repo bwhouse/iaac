@@ -1,0 +1,3 @@
+oracle_vm_no_ntp: true
+nebula_is_lighthouse: false 
+nebula_hostname: 'sl2.n.8en.co'

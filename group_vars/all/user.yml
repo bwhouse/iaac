@@ -1,0 +1,2 @@
+user: benw
+home: /home/{{ user }}

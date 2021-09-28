@@ -1,0 +1,16 @@
+  
+[Unit]
+Description=nebula
+Wants=basic.target
+After=basic.target network-online.target ntp.service
+Before=sshd.service
+
+[Service]
+User=nebula
+SyslogIdentifier=nebula
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/bin/nebula -config /etc/nebula/config.yml
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

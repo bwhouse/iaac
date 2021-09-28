@@ -1,0 +1,75 @@
+- name: Create docker group
+  group:
+    name: "{{ docker_user.name }}"
+    state: present
+    gid: "{{ docker_user.id }}"
+  become: true
+
+- name: Create docker user
+  user:
+    name: "{{ docker_user.name }}"
+    uid: "{{ docker_user.id }}"
+    group: "{{ docker_user.name }}"
+    create_home: false
+  become: true
+
+- name: Add user to docker user group
+  user:
+    name: "{{ user }}"
+    groups: "{{ docker_user.name }}"
+    append: true
+  become: true
+
+- name: Add user to docker group
+  user:
+    name: "{{ user }}"
+    groups: docker
+    append: true
+  become: true
+  register: add_group
+
+- name: reset ssh connection to allow user changes to affect 'current login user'
+  meta: reset_connection
+  when: add_group|changed
+
+- name: Clean up docker containers
+  cron:
+    name: clean up docker containers
+    hour: 12
+    minute: 0
+    weekday: 3
+    job: docker system prune -af --volumes
+
+- name: Create docker compose directory
+  file:
+    path: "{{ docker_appdata_dir }}"
+    state: directory
+    owner: "{{ docker_user.name }}"
+    mode: "{{ docker_compose_directory_mask }}"
+  become: true
+
+- name: Install compose files
+  template:
+    src: "files/{{ ansible_hostname }}/docker-compose.yml"
+    dest: "{{ docker_appdata_dir }}/docker-compose.yml"
+    mode: "{{ docker_compose_file_mask }}"
+    owner: "{{ docker_user.name }}"
+    validate: docker-compose -f %s config
+  register: compose_file
+  become: true
+
+- name: check if .env file exists for this server
+  local_action: stat path="files/{{ ansible_hostname }}/docker-compose.yml"
+  register: file
+  
+- name: Copy any docker .env files if they exist
+  copy:
+    src: "files/{{ ansible_hostname }}/.env"
+    dest: "{{ docker_appdata_dir }}/.env"
+  when: file.stat.exists
+
+- name: Execute docker-compose up
+  shell:
+    chdir: /opt/appdata
+    cmd: "{{ docker_start_command }}"
+  when: compose_file.changed

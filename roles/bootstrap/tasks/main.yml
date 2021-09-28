@@ -1,0 +1,27 @@
+- name: user
+  include: user.yml
+  
+- name: dns
+  include: dns.yml
+
+- name: datetime
+  include: datetime.yml
+
+- name: ssh
+  include: ssh.yml
+
+- name: fail2ban
+  include: fail2ban.yml
+
+- name: packages
+  include: packages.yml
+
+- name: mail
+  include: mail.yml
+
+- name: hostname
+  include: hostname.yml
+
+- name: firewall
+  include: firewall.yml
+

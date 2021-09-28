@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    container_name: uptime-kuma
+    volumes:
+      - {{ docker_appdata_dir }}/uptime-kuma:/app/data
+    ports:
+      - 3001:3001
+
+#
