@@ -26,4 +26,5 @@ EOT
 
 fi
 
+
 chmod +x .git/hooks/pre-commit

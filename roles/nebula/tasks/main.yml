@@ -62,7 +62,7 @@
 
 - name: Install CA certificate
   template:
-    src: files/ca.crt
+    src: files/certs/ca.crt
     dest: /etc/nebula/ca.crt
     group: nebula
     owner: nebula
