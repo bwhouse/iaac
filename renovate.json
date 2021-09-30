@@ -2,4 +2,7 @@
   "extends": [
     "config:base"
   ]
+  "docker-compose": {
+    "fileMatch": ["^host_vars/.*\\.yml$"]
+  }
 }
