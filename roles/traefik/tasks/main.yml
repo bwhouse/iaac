@@ -1,0 +1,28 @@
+- name: create / check traefik config folder exists
+  file:
+    dest: "{{ docker_appdata_dir }}/traefik"
+    state: directory
+    owner: "{{ docker_user.name }}"
+    mode: "{{ docker_compose_directory_mask }}"
+  become: true
+
+- name: copy traefik.yml to config directory
+  template:
+    src: files/traefik.yml
+    dest:  "{{ docker_appdata_dir }}/traefik/traefik.yml"
+    mode: "{{ docker_compose_file_mask }}"
+    owner: "{{ docker_user.name }}"
+  become: true
+#need to add notify
+
+- name: Allow 443 through firewall
+  community.general.ufw: 
+    proto: tcp 
+    port: 443 
+    rule: allow
+  become: true
+
+- name: Create traefik_proxy docker network
+  community.docker.docker_network:
+    name: traefik_proxy
+  become: true

@@ -5,7 +5,13 @@
     - bootstrap
     - nebula
 
-
+- hosts:
+    - docker
+    - shitlist
+  vars_files:
+    - 'vars/vault.yml'
+  roles:
+    - traefik
 
 - hosts:
     - dirt
