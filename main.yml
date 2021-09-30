@@ -1,4 +1,6 @@
 - hosts: all
+  vars_files:
+    - 'vars/vault.yml'
   roles:
     - bootstrap
     - nebula
@@ -9,6 +11,8 @@
     - dirt
     - shitlist
     - docker
+  vars_files:
+    - 'vars/vault.yml'
   roles:
     - role: geerlingguy.docker
       become: true
