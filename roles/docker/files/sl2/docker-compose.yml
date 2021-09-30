@@ -8,4 +8,13 @@ services:
     ports:
       - 3001:3001
 
-#
+  caddy:
+    image: caddy:2.4.5
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "{{ docker_appdata_dir }}/caddy/Caddyfile:/etc/caddy/Caddyfile"
+      - "{{ docker_appdata_dir }}/caddy/data:/data"
+      - "{{ docker_appdata_dir }}/caddy/config:/config"
