@@ -36,4 +36,7 @@
         docker_users:
           - "{{ user }}"
       when: 'ansible_architecture|string == "aarch64"'     
-    - docker
+    #- docker
+    - role: bwhouse.ansible-role-docker-compose-generator
+      become: true
+      tags: compose
