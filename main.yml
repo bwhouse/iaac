@@ -6,7 +6,7 @@
     - nebula
 
 - hosts:
-    - docker
+    - sl2
     - shitlist
   vars_files:
     - 'vars/vault.yml'
@@ -16,7 +16,7 @@
 - hosts:
     - dirt
     - shitlist
-    - docker
+    - sl2
   vars_files:
     - 'vars/vault.yml'
   roles:
@@ -36,7 +36,8 @@
         docker_users:
           - "{{ user }}"
       when: 'ansible_architecture|string == "aarch64"'     
-    #- docker
+    - role: docker
+      tags: compose
     - role: bwhouse.ansible-role-docker-compose-generator
       become: true
       tags: compose
