@@ -1,4 +1,5 @@
 ufw_default_block_incomming: true
 oracle_vm_no_ntp: false
+set_public_dns: false
 
 ufw_custom_rules: []

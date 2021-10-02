@@ -4,3 +4,4 @@
     dest: "/etc/resolv.conf"
     mode: 0644
   become: true
+  when: set_public_dns
