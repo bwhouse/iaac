@@ -4,6 +4,8 @@
   roles:
     - bootstrap
     - nebula
+    - role: ingress
+      tags: ingress
 
 - hosts:
     - sl2
@@ -11,7 +13,9 @@
   vars_files:
     - 'vars/vault.yml'
   roles:
-    - traefik
+    - role: traefik
+      tags: compose
+    
 
 - hosts:
     - dirt

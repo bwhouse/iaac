@@ -6,6 +6,14 @@
     mode: "{{ docker_compose_directory_mask }}"
   become: true
 
+- name: create / check traefik file provider folder exists
+  file:
+    dest: "{{ docker_appdata_dir }}/traefik/conf"
+    state: directory
+    owner: "{{ docker_user.name }}"
+    mode: "{{ docker_compose_directory_mask }}"
+  become: true
+
 - name: copy traefik.yml to config directory
   template:
     src: files/traefik.yml
@@ -15,12 +23,40 @@
   become: true
 #need to add notify
 
-- name: Allow 443 through firewall
+
+# - name: copy file providers
+#   template:
+#     src: files/tcp_provider.conf
+#     dest: "{{ docker_appdata_dir }}/traefik/conf/tcp_provider.yml"
+#     mode: "{{ docker_compose_file_mask }}"
+#     owner: "{{ docker_user.name }}"
+#   become: true
+#   when: traefik_file_providers
+
+
+- name: Allow 443 through firewall from cloudflare CDN
   community.general.ufw: 
     proto: tcp 
     port: 443 
     rule: allow
+    from_ip: "{{ item }}"
   become: true
+  loop:
+    - "173.245.48.0/20"
+    - "103.21.244.0/22"
+    - "103.22.200.0/22"
+    - "103.31.4.0/22"
+    - "141.101.64.0/18"
+    - "108.162.192.0/18"
+    - "190.93.240.0/20"
+    - "188.114.96.0/20"
+    - "197.234.240.0/22"
+    - "198.41.128.0/17"
+    - "162.158.0.0/15"
+    - "104.16.0.0/13"
+    - "104.24.0.0/14"
+    - "172.64.0.0/13"
+    - "131.0.72.0/22"
 
 - name: Create traefik_proxy docker network
   community.docker.docker_network:
