@@ -18,6 +18,8 @@
     port: '22' 
     rule: allow
   become: true
+  
+
 
 
 
@@ -37,3 +39,4 @@
     rule: '{{ item.rule }}'
   with_items: '{{ ufw_custom_rules }}'
   become: true
+
