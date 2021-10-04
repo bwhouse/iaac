@@ -1,0 +1,9 @@
+- name: create traefik file providers for all public services on private endpoints
+  template:
+    src: files/tcp_provider.conf
+    dest: "{{ docker_appdata_dir }}/traefik/conf/{{ ansible_hostname }}.conf"
+  delegate_to: "{{ public_ingress_host }}"
+  when: 
+    - ingress_required is defined
+    - containers is defined
+    - ingress_required
