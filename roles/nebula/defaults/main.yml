@@ -8,3 +8,14 @@ nebula_inbound_firewall_rules: |
   - port: any
     proto: icmp
     host: any
+  - port: ssh
+    proto: tcp
+    groups:
+      - servers
+      - admins
+  - port: 443
+    proto: tcp
+    host: any
+  - port: 80
+    proto: tcp
+    host: any

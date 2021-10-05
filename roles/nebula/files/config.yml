@@ -242,15 +242,10 @@ firewall:
 
   outbound:
     # Allow all outbound traffic from this node
-    - port: any
-      proto: any
-      host: any
-
+    {{ nebula_outbound_firewall_rules | indent( width=4 ) }}
   inbound:
     # Allow icmp between any nebula hosts
-    - port: any
-      proto: any
-      host: any
+    {{ nebula_inbound_firewall_rules | indent( width=4 ) }}
 
     # Allow tcp/443 from any host with BOTH laptop and home group
     - port: 443
