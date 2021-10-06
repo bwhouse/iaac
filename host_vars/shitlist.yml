@@ -1,0 +1,74 @@
+
+
+oracle_vm_no_ntp: true
+set_public_dns: true
+
+nebula_ip: 10.10.10.2/24
+nebula_groups: "ssh,servers,lighthouse"
+nebula_hostname: "shitlist.{{ nebula_domain_name }}"
+
+ufw_custom_rules:
+  - comment: unifi controller 8080
+    proto: tcp
+    port: 8080
+    rule: allow
+  - comment: unifi controller web
+    proto: tcp
+    port: 8443
+    rule: allow  
+
+## setup ingress file providers
+#ingress_required: true
+  
+containers:
+  ###
+  - service_name: unifi-controller
+    active: true
+    image: linuxserver/unifi-controller
+    container_name: unifi-controller
+    environment:
+      - PUID=3000
+      - PGID=3000
+    #  - MEM_LIMIT=1024M #optional
+    volumes:
+      - /opt/appdata/unifi:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+    restart: unless-stopped
+    ingress_hostname: "status.{{ domain_name }}"
+    public_service: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.unifi-rtr.entrypoints=https"
+      - "traefik.http.routers.unifi-rtr.rule=Host(`unifi.{{ domain_name }}`)"
+      - "traefik.http.routers.unifi-rtr.service=unifi-svc"
+      - "traefik.http.services.unifi-svc.loadbalancer.server.port=8443"
+      - "traefik.http.services.unifi-svc.loadbalancer.server.scheme=https"
+  ###
+  - service_name: tr
+    active: true
+    image: traefik
+    networks:
+      - default
+      - traefik_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8088:8080"
+    restart: unless-stopped
+    ingress_hostname: "tf.{{ domain_name }}"
+    public_service: true
+    environment:
+      - CF_API_EMAIL={{ cloudflare_email }}
+      - CF_API_KEY={{ cloudflare_api_key }}
+      - CLOUDFLARE_EMAIL={{ cloudflare_email }}
+      - CLOUDFLARE_API_KEY={{ cloudflare_api_key }}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "{{ docker_appdata_dir }}/traefik:/etc/traefik"
+

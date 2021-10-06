@@ -1,0 +1,7 @@
+ufw_default_block_incomming: false
+ufw_custom_rules: []
+
+
+nebula_ip: 10.10.10.4/24
+nebula_groups: "ssh,trusted,servers,lighthouse"
+nebula_hostname: "nuc.{{ nebula_domain_name }}"

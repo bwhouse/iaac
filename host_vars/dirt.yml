@@ -1,0 +1,18 @@
+set_public_dns: true
+
+ufw_custom_rules: []
+
+nebula_ip: 10.10.10.1/24
+nebula_groups: "ssh,servers,lighthouse"
+nebula_hostname: "dirt.{{ nebula_domain_name }}"
+
+# container definitions
+containers:
+  - service_name: uptime-kuma
+    active: true
+    image: louislam/uptime-kuma:1.7.1
+    container_name: uptime-kuma
+    volumes:
+      - "{{ docker_appdata_dir }}/uptime-kuma:/app/data"
+    ports:
+      - 3001:3001

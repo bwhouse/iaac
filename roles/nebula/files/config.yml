@@ -247,9 +247,3 @@ firewall:
     # Allow icmp between any nebula hosts
     {{ nebula_inbound_firewall_rules | indent( width=4 ) }}
 
-    # Allow tcp/443 from any host with BOTH laptop and home group
-    - port: 443
-      proto: tcp
-      groups:
-        - laptop
-        - home
