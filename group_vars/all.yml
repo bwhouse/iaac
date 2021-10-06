@@ -1,0 +1,48 @@
+timezone: Australia/Sydney
+
+## Main User
+user: benw
+home: /home/{{ user }}
+
+## traefik / ingress config
+public_ingress_host: "sl2.{{ domain_name }}"
+private_ingress_host: 10.10.10.3
+
+
+## Docker Globals
+docker_user:
+  id: 3000
+  name: dockeruser
+docker_appdata_dir: /opt/appdata
+docker_compose_generator_output_path: "{{ docker_appdata_dir }}"
+docker_compose_generator_uid: "{{ docker_user.id }}"
+docker_compose_generator_gid: "{{ docker_user.id }}"
+run_compose_on_file_change: true
+docker_compose_file_mask: 0664
+docker_compose_directory_mask: 0775
+docker_update_command: docker-compose pull && docker-compose down --remove-orphans && docker-compose rm && docker-compose up -d
+
+## Nebula Globals
+nebula:
+  cidr: 10.10.10.0/24
+
+nebula_inbound_firewall_rules: |
+  - port: any
+    proto: icmp
+    host: any
+  - port: 22
+    proto: tcp
+    group: ssh
+  - port: 443
+    proto: tcp
+    group: public-servers
+  - port: 80
+    proto: tcp
+    group: public-servers
+  - port: any
+    proto: any
+    group: admin
+  - port: any
+    proto: any
+    group: trusted-servers
+      
