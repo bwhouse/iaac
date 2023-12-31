@@ -31,7 +31,7 @@ containers:
   ###
   - service_name: uptime-kuma
     active: true
-    image: louislam/uptime-kuma:1.7.1
+    image: louislam/uptime-kuma:1.23.11
     container_name: uptime-kuma
     volumes:
       - "{{ docker_appdata_dir }}/uptime-kuma:/app/data"
